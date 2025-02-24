@@ -1,0 +1,9 @@
+[workspace]
+members = [
+	"logger",
+	"datastore", 
+    "protocol",
+]
+resolver = "2"
+
+[workspace.dependencies]
