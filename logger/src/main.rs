@@ -1,17 +1,17 @@
 mod ds18b20;
 mod w1_errors;
-use std::{thread, time};
-
-use std::fs::File;
-use std::io::BufReader;
-use std::env;
 use java_properties::read;
+
+use std::{fs::File, io::BufReader, thread, time, net::UdpSocket};
+use postcard::to_stdvec;
+use serde::{Serialize, Deserialize};
+use protocol::Temperature;
+
+
 
 fn main() {
 
-    let mut file_name = env::current_dir().unwrap();
-    file_name.push("rutemplogger.properties");
-
+    let file_name = "/home/pero/src/rust/pero/templogger-ru/logger/src/rutemplogger.properties"; //env::current_dir().unwrap();
 
     // Reading
     let  f = File::open(&file_name).unwrap();
@@ -26,6 +26,9 @@ fn main() {
         panic!("Panicking...");          
     }
 
+    let target_ip = "192.168.50.60:5000"; // Change this to your target IP and port
+    let socket = UdpSocket::bind("0.0.0.0:0").expect("Could not bind to UDP socket");
+    
     let sensors = ds18b20::DS18B20::new().unwrap();
 
     for sensor in &sensors.w1_id {
@@ -54,6 +57,15 @@ fn main() {
                         let t = temp.to_celsius();
                         let i = expectedsensors.iter().position(|&r| r == &s).unwrap();
                         println!("{} no {}: {:.1} C", sensor, &i, &t);
+                        let ii: u8 = i as u8;
+                        let data = Temperature {  id: ii ,temperature:t};
+                        //let data = CpuTemperature { temperature: temp };
+                        match to_stdvec(&data) {
+                            Ok(serialized) => {
+                                let _ = socket.send_to(&serialized, target_ip);
+                            }
+                            Err(e) => eprintln!("Serialization error: {}", e),
+                        }
                 },
             }
         }
