@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 java-properties = "2.0.0"
 serde = { version = "1.0", features = ["derive"] }
-postcard = {version = "1.0", features = ["use-std"]}
+postcard = { version = "1.0", features = ["use-std"] }
 protocol = { path = "../protocol" }
 
 #[build]
