@@ -9,3 +9,5 @@ serde = { version = "1.0", features = ["derive"] }
 postcard = {version = "1.0", features = ["use-std"]}
 protocol = { path = "../protocol" }
 
+#[build]
+#target = "armv7-unknown-linux-gnueabihf"
