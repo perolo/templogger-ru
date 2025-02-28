@@ -4,7 +4,6 @@ use java_properties::read;
 
 use std::{fs::File, io::BufReader, thread, time, net::UdpSocket};
 use postcard::to_stdvec;
-use serde::{Serialize, Deserialize};
 use protocol::Temperature;
 
 
@@ -28,7 +27,7 @@ fn main() {
 
     let target_ip = "192.168.50.60:5000"; // Change this to your target IP and port
     let socket = UdpSocket::bind("0.0.0.0:0").expect("Could not bind to UDP socket");
-    
+
     let sensors = ds18b20::DS18B20::new().unwrap();
 
     for sensor in &sensors.w1_id {
